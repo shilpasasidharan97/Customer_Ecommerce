@@ -16,3 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = User.objects.create_user(username=username, password=password, **validated_data)
         return user
+    
+class UserLoginSerializer(serializers.Serializer): 
+
+    username =serializers.CharField(min_length=2, max_length=50, required=True)
+    password = serializers.CharField(min_length=1, max_length=50, required=True)
