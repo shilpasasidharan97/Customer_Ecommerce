@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import Product, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,3 +21,16 @@ class UserLoginSerializer(serializers.Serializer):
 
     username =serializers.CharField(min_length=2, max_length=50, required=True)
     password = serializers.CharField(min_length=1, max_length=50, required=True)
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('name', 'price', 'description')
+        read_only_fields = ('id', )
+
+
+# class ProductUpdatedViewSet(serializers.ModelSerializer):
+#     class Meta:
+#         model = Product
+#         fields = ('name', 'price', 'description', 'is_active')
