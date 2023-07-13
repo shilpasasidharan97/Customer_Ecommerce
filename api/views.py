@@ -37,7 +37,6 @@ class UserLoginView(viewsets.ModelViewSet):
 
         if user is not None:
             login(request, user)
-            print(user)
             return Response({'success': 'User logged in successfully'})
         else:
             return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -64,21 +63,18 @@ class ProductViewSet(viewsets.ModelViewSet):
             serializer.save()
         
         two_months_ago = timezone.now() - timezone.timedelta(days=60)
-       
-        desired_date = datetime(2023, 9, 20, 9, 59, 0, tzinfo=timezone.utc)
-        my_instance = Product.objects.filter(pk=8).create(created_at=desired_date)
-        my_instance.save()
-        print(my_instance)
+        print(two_months_ago)
+        print(instance.created_at)
         if instance.created_at > two_months_ago:
+            serializer.validated_data['is_active'] = False
             serializer.validated_data['is_active'] = True
         else:
-            serializer.validated_data['is_active'] = False
+            serializer.validated_data['is_active'] = True
 
         serializer.save()
 
 
     def perform_destroy(self, instance):
-        print(instance)
         if instance.user != self.request.user:
             raise PermissionDenied("You don't have permission to delete this product.")
 
