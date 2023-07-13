@@ -106,11 +106,9 @@ class ProductActiveView(viewsets.ModelViewSet):
                         product.is_active = True
                         product.save()
                         return Response({'message': 'Product Activated successfully'})
-                    product.is_active = False
-                    product.save()
-                    return Response({'message': 'Product InActivated successfully'})
                 else:
                     product.is_active = True
+                    product.save()
                     return Response({'message': 'Product InActive only after 2 months.'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'User can only change thare own products'}, status=status.HTTP_400_BAD_REQUEST)
