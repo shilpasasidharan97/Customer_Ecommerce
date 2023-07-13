@@ -26,7 +26,7 @@ class UserLoginSerializer(serializers.Serializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('name', 'price', 'description', 'is_active')
+        fields = ('name', 'price', 'description')
         read_only_fields = ('id', )
 
 
