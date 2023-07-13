@@ -79,12 +79,12 @@ class ProductViewSet(viewsets.ModelViewSet):
             serializer.save()
         
         # active inactive after 2 month
-        two_months_ago = timezone.now() - timezone.timedelta(days=60)
-        if instance.created_at > two_months_ago:
-            serializer.validated_data['is_active'] = False
-        else:
-            serializer.validated_data['is_active'] = True
-        serializer.save()
+        # two_months_ago = timezone.now() - timezone.timedelta(days=60)
+        # if instance.created_at > two_months_ago:
+        #     serializer.validated_data['is_active'] = False
+        # else:
+        #     serializer.validated_data['is_active'] = True
+        # serializer.save()
 
     # delete
     def perform_destroy(self, instance):
