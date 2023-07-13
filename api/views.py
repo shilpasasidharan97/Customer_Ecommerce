@@ -106,14 +106,24 @@ class ProductActiveView(viewsets.ModelViewSet):
         try:
             product = self.get_object()
             if product.user == request.user:
+                
                 if product.created_at > two_months_ago:
+                    if product.is_active == True:
+                        product.is_active = False
+                        product.save()
+                        return Response({'message': 'Product InActivated successfully'})
+                    elif product.is_active == False:
+                        product.is_active = True
+                        product.save()
+                        return Response({'message': 'Product Activated successfully'})
                     product.is_active = False
                     product.save()
                     return Response({'message': 'Product InActivated successfully'})
                 else:
                     product.is_active = True
-                    return Response({'message': 'Product Activated successfully yet.'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'Product InActive only after 2 months.'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'User can only change thare own products'}, status=status.HTTP_400_BAD_REQUEST)
         except Product.DoesNotExist:
             return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
