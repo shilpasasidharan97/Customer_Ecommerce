@@ -1,12 +1,13 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+from .serializers import ProductActiveSerializer, ProductSerializer, UserSerializer, UserLoginSerializer
+
 from django.contrib.auth import authenticate, login, logout
 from .models import Product, User
-from .serializers import ProductActiveSerializer, ProductSerializer, UserSerializer, UserLoginSerializer
-from rest_framework.exceptions import PermissionDenied
+
 from django.utils import timezone
 from datetime import datetime
 
@@ -77,14 +78,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("You don't have permission to update this product.")
         else:
             serializer.save()
-        
-        # active inactive after 2 month
-        # two_months_ago = timezone.now() - timezone.timedelta(days=60)
-        # if instance.created_at > two_months_ago:
-        #     serializer.validated_data['is_active'] = False
-        # else:
-        #     serializer.validated_data['is_active'] = True
-        # serializer.save()
 
     # delete
     def perform_destroy(self, instance):
@@ -95,19 +88,16 @@ class ProductViewSet(viewsets.ModelViewSet):
             instance.delete()
 
 
-
-
+# Active Inactive
 class ProductActiveView(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductActiveSerializer
-    # permission_classes = [IsAuthenticated]
     def activate(self, request, pk=None):
         two_months_ago = timezone.now() - timezone.timedelta(days=60)
         try:
             product = self.get_object()
             if product.user == request.user:
-                
-                if product.created_at > two_months_ago:
+                if product.created_at < two_months_ago:
                     if product.is_active == True:
                         product.is_active = False
                         product.save()
