@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from .models import Product, User
-from .serializers import ProductSerializer, UserSerializer, UserLoginSerializer
+from .serializers import ProductActiveSerializer, ProductSerializer, UserSerializer, UserLoginSerializer
 from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 from datetime import datetime
@@ -80,14 +80,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         
         # active inactive after 2 month
         two_months_ago = timezone.now() - timezone.timedelta(days=60)
-        print(two_months_ago)
-        print(instance.created_at)
-
-        # if instance.created_at > two_months_ago:
-        #     serializer.validated_data['is_active'] = False
-        # else:
-        #     serializer.validated_data['is_active'] = True
-        # serializer.save()
+        if instance.created_at > two_months_ago:
+            serializer.validated_data['is_active'] = False
+        else:
+            serializer.validated_data['is_active'] = True
+        serializer.save()
 
     # delete
     def perform_destroy(self, instance):
@@ -100,41 +97,23 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # if instance.is_inactive():
-        #     serializer.validated_data['active'] = False
-        # serializer.save()
-
-    # def perform_update(self, serializer):
-    #     product = serializer.instance
-    #     print
-    #     if not product.is_registered_before_2_month():
-    #         serializer.save(user=self.request.user)
-    #     else:
-    #         product.is_active = False
-    #         product.save()
-    #         return Response({'details':'Product maded to inactive ',}, status=status.HTTP_200_ok)
-
-# class ProductViewSet(viewsets.ModelViewSet):
-    # queryset = Product.objects.all()
-    # serializer_class = ProductSerializer
-
-    # def perform_update(self, serializer):
-    #     instance = serializer.instance
-    #     if instance.is_inactive():
-    #         serializer.validated_data['active'] = False
-    #     serializer.save()
-
-
+class ProductActiveView(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductActiveSerializer
+    # permission_classes = [IsAuthenticated]
+    def activate(self, request, pk=None):
+        two_months_ago = timezone.now() - timezone.timedelta(days=60)
+        try:
+            product = self.get_object()
+            if product.user == request.user:
+                if product.created_at > two_months_ago:
+                    product.is_active = False
+                    product.save()
+                    return Response({'message': 'Product InActivated successfully'})
+                else:
+                    product.is_active = True
+                    return Response({'message': 'Product Activated successfully yet.'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'message': 'User can only change thare own products'}, status=status.HTTP_400_BAD_REQUEST)
+        except Product.DoesNotExist:
+            return Response({'message': 'Product not found.'}, status=status.HTTP_404_NOT_FOUND)

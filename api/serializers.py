@@ -30,7 +30,7 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', )
 
 
-# class ProductUpdatedViewSet(serializers.ModelSerializer):
-#     class Meta:
-#         model = Product
-#         fields = ('name', 'price', 'description', 'is_active')
+class ProductActiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('is_active')
