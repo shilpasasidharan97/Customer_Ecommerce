@@ -10,6 +10,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/login/', UserLoginView.as_view({'post': 'create'}), name='login'),
     path('api/logout/', UserLogoutView.as_view({'get': 'logout'}), name='logout'),
-    # path('api/products//active-inactive/', ProductUpdatedViewSet.as_view({'post': 'perform_update'}), name='logout'),
 
 ]

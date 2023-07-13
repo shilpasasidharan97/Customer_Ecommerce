@@ -3,8 +3,8 @@ from .models import Product, User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(write_only=True)
-    password = serializers.CharField(write_only=True)
+    username = serializers.CharField()
+    password = serializers.CharField()
 
     class Meta:
         model = User
@@ -17,8 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(username=username, password=password, **validated_data)
         return user
     
-class UserLoginSerializer(serializers.Serializer): 
 
+class UserLoginSerializer(serializers.Serializer): 
     username =serializers.CharField(min_length=2, max_length=50, required=True)
     password = serializers.CharField(min_length=1, max_length=50, required=True)
 

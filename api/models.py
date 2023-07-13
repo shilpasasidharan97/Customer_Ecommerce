@@ -26,6 +26,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-    
-    def is_registered_before_2_month(self):
-        return timezone.now() - self.created_at > timedelta(days=60)
